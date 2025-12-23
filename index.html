@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Christmas Surprise</title>
+    
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Permanent+Marker&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+        }
+        .font-display {
+            font-family: 'Anton', sans-serif;
+        }
+        .font-hand {
+            font-family: 'Permanent Marker', cursive;
+        }
+        .card-bg {
+            background-image: radial-gradient(circle at center, #2a0a0a 0%, #000000 100%);
+        }
+        .texture-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M5 0h1v1H5V0zM0 5h1v1H0V5z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: fall 3s linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+        .seat-marker {
+            animation: pulse-star 2s infinite;
+        }
+        @keyframes pulse-star {
+            0% { transform: scale(1); text-shadow: 0 0 0 rgba(255, 215, 0, 0.7); }
+            50% { transform: scale(1.3); text-shadow: 0 0 20px rgba(255, 215, 0, 1); }
+            100% { transform: scale(1); text-shadow: 0 0 0 rgba(255, 215, 0, 0.7); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [stage, setStage] = useState(0); // 0: Gift, 1: Hint 1, 2: Hint 2, 3: Reveal
+            const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+            // Concert Date: April 12, 2026 7:00 PM CST
+            const concertDate = new Date('2026-04-12T19:00:00-05:00');
+
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    const now = new Date();
+                    const difference = concertDate - now;
+
+                    if (difference > 0) {
+                        setTimeLeft({
+                            days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                            hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                            minutes: Math.floor((difference / 1000 / 60) % 60),
+                            seconds: Math.floor((difference / 1000) % 60)
+                        });
+                    }
+                }, 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            const nextStage = () => setStage(prev => prev + 1);
+
+            const renderContent = () => {
+                switch(stage) {
+                    case 0:
+                        return (
+                            <div className="flex flex-col items-center justify-center min-h-screen text-center p-4 cursor-pointer" onClick={nextStage}>
+                                <h1 className="text-4xl md:text-6xl mb-8 font-display text-red-500 tracking-widest uppercase">Merry Christmas</h1>
+                                <div className="relative group animate-float">
+                                    <i className="fa-solid fa-gift text-9xl text-white group-hover:text-red-500 transition-colors duration-300"></i>
+                                    <p className="mt-8 text-xl animate-pulse text-gray-400">Tap to Unwrap</p>
+                                </div>
+                            </div>
+                        );
+                    case 1:
+                        return (
+                            <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 bg-neutral-900 transition-all duration-1000">
+                                <div className="max-w-2xl border-4 border-white p-8 md:p-12 relative">
+                                    <div className="absolute -top-6 -left-6 text-6xl text-red-600"><i className="fa-solid fa-quote-left"></i></div>
+                                    <h2 className="text-2xl md:text-4xl font-bold mb-6">Hint #1</h2>
+                                    <p className="text-xl md:text-2xl italic mb-8">
+                                        "Prepare for a night of worship where we turn <span className="text-red-500 font-bold">Graves Into Gardens</span>..."
+                                    </p>
+                                    <button onClick={nextStage} className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-full transition-all transform hover:scale-105">
+                                        Next Clue <i className="fa-solid fa-arrow-right ml-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    case 2:
+                        return (
+                            <div className="flex flex-col items-center justify-center min-h-screen text-center p-8 bg-neutral-800 transition-all duration-1000">
+                                <div className="max-w-2xl border-4 border-red-600 p-8 md:p-12 relative bg-black bg-opacity-50">
+                                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-5xl text-red-500">
+                                        <i className="fa-solid fa-music"></i>
+                                    </div>
+                                    <h2 className="text-2xl md:text-4xl font-bold mb-6 mt-4">Hint #2</h2>
+                                    <p className="text-xl md:text-2xl italic mb-8">
+                                        "We are going to <span className="text-red-500 font-bold">Tear Off The Roof</span> right here in St. Louis!"
+                                    </p>
+                                    <button onClick={nextStage} className="px-8 py-3 bg-white text-black hover:bg-gray-200 font-bold rounded-full transition-all transform hover:scale-105">
+                                        Reveal The Gift <i className="fa-solid fa-gift ml-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    case 3:
+                        return (
+                            <div className="min-h-screen w-full card-bg texture-overlay overflow-x-hidden">
+                                {/* Navigation / Header */}
+                                <nav className="w-full p-6 flex justify-between items-center bg-black bg-opacity-50">
+                                    <div className="text-xl font-display tracking-widest text-red-600">KING OF HEARTS TOUR</div>
+                                    <div className="text-sm text-gray-400">EST. 2026</div>
+                                </nav>
+
+                                {/* Main Content */}
+                                <main className="container mx-auto px-4 py-12 flex flex-col items-center text-center relative">
+                                    
+                                    {/* Playing Card Decor */}
+                                    <div className="absolute top-20 left-10 opacity-10 rotate-[-15deg] hidden md:block">
+                                        <div className="text-9xl">K<span className="text-red-600">♥</span></div>
+                                    </div>
+                                    <div className="absolute top-20 right-10 opacity-10 rotate-[15deg] hidden md:block">
+                                        <div className="text-9xl">A<span className="text-red-600">♥</span></div>
+                                    </div>
+
+                                    {/* Artist Name */}
+                                    <h1 className="text-6xl md:text-9xl font-display uppercase tracking-tighter mb-4 text-white drop-shadow-[0_5px_5px_rgba(220,38,38,0.5)]">
+                                        Brandon <br/> <span className="text-red-600">Lake</span>
+                                    </h1>
+
+                                    <div className="w-24 h-1 bg-red-600 mb-8"></div>
+
+                                    {/* Tour Image */}
+                                    <div className="w-full max-w-3xl mb-12 transform hover:scale-[1.02] transition-transform duration-500">
+                                        <img 
+                                            src="https://www.enterprisecenter.com/assets/img/KOH_960x480-a031ba2954.jpg" 
+                                            alt="King of Hearts Tour Banner" 
+                                            className="w-full h-auto rounded-xl shadow-[0_0_30px_rgba(220,38,38,0.3)] border border-white/10"
+                                        />
+                                    </div>
+
+                                    {/* Tour Details Box */}
+                                    <div className="bg-white bg-opacity-5 border border-white/20 backdrop-blur-sm p-8 rounded-lg max-w-3xl w-full shadow-2xl transform hover:scale-[1.01] transition-transform duration-500">
+                                        <h2 className="text-3xl md:text-5xl font-display mb-2">ST. LOUIS</h2>
+                                        <p className="text-xl md:text-2xl text-gray-300 font-light mb-6">ENTERPRISE CENTER</p>
+                                        
+                                        <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-8 border-y border-white/10 py-6">
+                                            <div className="text-center">
+                                                <div className="text-red-500 text-sm uppercase tracking-widest mb-1">Date</div>
+                                                <div className="text-2xl font-bold">APRIL 12, 2026</div>
+                                            </div>
+                                            <div className="hidden md:block w-px h-12 bg-white/20"></div>
+                                            <div className="text-center">
+                                                <div className="text-red-500 text-sm uppercase tracking-widest mb-1">Time</div>
+                                                <div className="text-2xl font-bold">7:00 PM</div>
+                                            </div>
+                                            <div className="hidden md:block w-px h-12 bg-white/20"></div>
+                                            <div className="text-center">
+                                                <div className="text-red-500 text-sm uppercase tracking-widest mb-1">Guests</div>
+                                                <div className="text-xl">Pat Barrett & Franni Cash</div>
+                                            </div>
+                                        </div>
+
+                                        {/* Countdown */}
+                                        <div className="mb-8">
+                                            <p className="text-sm uppercase tracking-widest mb-4 text-gray-400">Countdown to Worship</p>
+                                            <div className="grid grid-cols-4 gap-2 md:gap-4 text-center">
+                                                <div className="bg-black bg-opacity-50 p-3 rounded">
+                                                    <div className="text-2xl md:text-4xl font-bold text-red-500">{timeLeft.days}</div>
+                                                    <div className="text-xs text-gray-400">DAYS</div>
+                                                </div>
+                                                <div className="bg-black bg-opacity-50 p-3 rounded">
+                                                    <div className="text-2xl md:text-4xl font-bold text-red-500">{timeLeft.hours}</div>
+                                                    <div className="text-xs text-gray-400">HRS</div>
+                                                </div>
+                                                <div className="bg-black bg-opacity-50 p-3 rounded">
+                                                    <div className="text-2xl md:text-4xl font-bold text-red-500">{timeLeft.minutes}</div>
+                                                    <div className="text-xs text-gray-400">MINS</div>
+                                                </div>
+                                                <div className="bg-black bg-opacity-50 p-3 rounded">
+                                                    <div className="text-2xl md:text-4xl font-bold text-red-500">{timeLeft.seconds}</div>
+                                                    <div className="text-xs text-gray-400">SECS</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <p className="font-hand text-2xl md:text-3xl text-yellow-500 rotate-[-2deg]">We're going to see him live!!</p>
+                                    </div>
+                                    
+                                    {/* Seating Chart Section */}
+                                    <div className="mt-12 w-full max-w-3xl bg-white bg-opacity-5 p-6 rounded-xl border border-white/20">
+                                        <h3 className="text-3xl font-display mb-6 text-red-500 tracking-wider">YOUR SEATS: SECTION 115</h3>
+                                        <div className="relative w-full rounded-lg overflow-hidden bg-white">
+                                            {/* Seating Chart Image */}
+                                            {/* REPLACE THE SRC BELOW WITH YOUR OWN IMAGE IF YOU HAVE ONE */}
+                                            <img 
+                                                src="https://maps.gametime.co/v2/enterprise_center/concert/concert-generic/map.png?width=640" 
+                                                alt="Enterprise Center Seating Chart" 
+                                                className="w-full h-auto opacity-90"
+                                            />
+                                            
+                                            {/* Star Marker - Adjust top/left percentages to move the star */}
+                                            <div 
+                                                className="absolute text-yellow-400 seat-marker drop-shadow-md"
+                                                style={{ 
+                                                    top: '65%',   /* Vertical Position */
+                                                    left: '78%',  /* Horizontal Position */
+                                                    fontSize: '2rem'
+                                                }}
+                                            >
+                                                <i className="fa-solid fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <p className="mt-4 text-gray-400 text-sm italic">Enterprise Center - Concert Configuration</p>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="mt-12 flex flex-col md:flex-row gap-4 w-full max-w-3xl justify-center">
+                                        <a href="https://music.apple.com/us/artist/brandon-lake/1050382282" target="_blank" className="flex-1 bg-[#FA243C] hover:bg-[#ff4055] text-white font-bold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-3">
+                                            <i className="fa-brands fa-apple text-2xl"></i> Apple Music
+                                        </a>
+                                        <a href="https://youtube.com/@brandonlakeofficial?si=8EFQ3FF8PoZnUTtJ" target="_blank" className="flex-1 bg-[#FF0000] hover:bg-[#cc0000] text-white font-bold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-3">
+                                            <i className="fa-brands fa-youtube text-2xl"></i> YouTube
+                                        </a>
+                                        <a href="https://www.enterprisecenter.com/events/detail/brandon-lake" target="_blank" className="flex-1 bg-white hover:bg-gray-200 text-black font-bold py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-3">
+                                            <i className="fa-solid fa-circle-info text-2xl"></i> Venue Info
+                                        </a>
+                                    </div>
+                                    
+                                </main>
+
+                                {/* Footer */}
+                                <footer className="w-full text-center py-8 text-gray-600 text-sm">
+                                    <p>Made with Love for Christmas 2025</p>
+                                </footer>
+                            </div>
+                        );
+                }
+            };
+
+            return (
+                <div className="w-full h-full">
+                    {renderContent()}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
