@@ -232,19 +232,19 @@
                                         <h3 className="text-3xl font-display mb-6 text-red-500 tracking-wider">YOUR SEATS: SECTION 115</h3>
                                         <div className="relative w-full rounded-lg overflow-hidden bg-white">
                                             {/* Seating Chart Image */}
-                                            {/* REPLACE THE SRC BELOW WITH YOUR OWN IMAGE IF YOU HAVE ONE */}
                                             <img 
                                                 src="seating-chart.jpg" 
                                                 alt="Enterprise Center Seating Chart" 
                                                 className="w-full h-auto opacity-90"
                                             />
                                             
-                                            {/* Star Marker - Adjust top/left percentages to move the star */}
+                                            {/* Star Marker */}
+                                            {/* Star Position - Adjust these values to move the star on the map */}
                                             <div 
                                                 className="absolute text-yellow-400 seat-marker drop-shadow-md"
                                                 style={{ 
-                                                    top: '65%',   /* Vertical Position */
-                                                    left: '78%',  /* Horizontal Position */
+                                                    top: '63%',   /* Vertical Position (0% is top, 100% is bottom) */
+                                                    left: '55.5%',  /* Horizontal Position (0% is left, 100% is right) */
                                                     fontSize: '2rem'
                                                 }}
                                             >
